@@ -18,7 +18,7 @@ export class Users {
   email: string;
 
   @Column()
-  password_hash: string;
+  password: string;
 
   @Column({ default: false })
   verified: boolean;

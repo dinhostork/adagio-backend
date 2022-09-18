@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Get, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IUsers } from './IUsers';
@@ -13,5 +13,9 @@ export class UsersService {
 
   async create(data: IUsers): Promise<Users> {
     return this.usersRepository.save(data);
+  }
+
+  async getAll() {
+    return this.usersRepository.find();
   }
 }

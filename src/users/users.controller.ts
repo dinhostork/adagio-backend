@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -31,5 +31,10 @@ export class UsersController {
   @Get(':id')
   async getById(@Param('id') id: number) {
     return this.usersService.getById(id);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: number) {
+    return this.usersService.deleteById(id);
   }
 }

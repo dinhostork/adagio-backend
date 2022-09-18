@@ -1,4 +1,4 @@
-import { Get, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IUsers } from './IUsers';
@@ -21,5 +21,9 @@ export class UsersService {
 
   async getById(id: number): Promise<Users | null> {
     return this.usersRepository.findOneBy({ id });
+  }
+
+  async deleteById(id: number): Promise<any> {
+    return this.usersRepository.delete({ id });
   }
 }

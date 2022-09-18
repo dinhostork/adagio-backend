@@ -15,7 +15,11 @@ export class UsersService {
     return this.usersRepository.save(data);
   }
 
-  async getAll() {
+  async getAll(): Promise<Users[]> {
     return this.usersRepository.find();
+  }
+
+  async getById(id: number): Promise<Users | null> {
+    return this.usersRepository.findOneBy({ id });
   }
 }

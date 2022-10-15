@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -10,13 +18,13 @@ export class UsersController {
     @Body('name') name: string,
     @Body('email') email: string,
     @Body('password') password: string,
-    @Body('register_ip') register_ip: string,
+    @Request() req,
   ) {
     return this.usersService.create({
       name,
       email,
       password,
-      register_ip,
+      register_ip: req.ip,
       active: true,
       verified: false,
       admin: false,

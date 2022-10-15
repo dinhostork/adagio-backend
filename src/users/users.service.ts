@@ -23,6 +23,10 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
+  async getByEmail(email: string): Promise<Users | null> {
+    return this.usersRepository.findOneBy({ email });
+  }
+
   async deleteById(id: number): Promise<any> {
     return this.usersRepository.delete({ id });
   }

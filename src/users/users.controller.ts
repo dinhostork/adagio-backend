@@ -3,12 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Request,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-
+import { Response } from 'express';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -19,7 +21,16 @@ export class UsersController {
     @Body('email') email: string,
     @Body('password') password: string,
     @Request() req,
+    @Res() res: Response,
   ) {
+    const userExists = await this.usersService.getByEmail(email);
+
+    if (userExists) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ error: 'Já existe um usuário com este endereço de e-mail' });
+    }
+
     return this.usersService.create({
       name,
       email,

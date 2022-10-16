@@ -10,7 +10,7 @@ export class AuthService {
 
   async generateJwt(user: IUsers): Promise<string> {
     user.password = undefined;
-    return this.jwtService.signAsync({ user });
+    return this.jwtService.sign({ user });
   }
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, saltOrRounds);

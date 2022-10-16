@@ -38,7 +38,7 @@ export class UsersController {
 
     const password_hash = await bcrypt.hash(userDto.password, saltOrRounds);
 
-    return this.usersService.create({
+    const user = await this.usersService.create({
       name: userDto.name,
       email: userDto.email,
       password: password_hash,
@@ -47,6 +47,8 @@ export class UsersController {
       verified: false,
       admin: false,
     });
+
+    return res.status(HttpStatus.OK).json(user);
   }
 
   @Get()

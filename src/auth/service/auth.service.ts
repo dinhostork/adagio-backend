@@ -9,9 +9,9 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   async generateJwt(user: IUsers): Promise<string> {
-    user.password = undefined;
-    return this.jwtService.sign({ user });
+    return this.jwtService.sign({ id: user.id });
   }
+
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, saltOrRounds);
   }

@@ -8,20 +8,19 @@ import {
   Post,
   Request,
   Res,
-  UsePipes,
-  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Response } from 'express';
 import STRINGS from '../constants/strings';
-import { CreateUserDto } from './createUser.dto';
+import { CreateUserDto } from './dtos/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { saltOrRounds } from 'src/security/encript.config';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
   async create(
     @Body() userDto: CreateUserDto,
@@ -53,6 +52,7 @@ export class UsersController {
     return res.status(HttpStatus.OK).json(user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getALL() {
     return this.usersService.getAll();

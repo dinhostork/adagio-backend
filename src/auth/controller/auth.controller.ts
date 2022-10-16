@@ -5,6 +5,7 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
+import STRINGS from 'src/constants/strings';
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from '../dtos/login.dto';
 import { AuthService } from '../service/auth.service';
@@ -22,10 +23,10 @@ export class AuthController {
 
     const user = await this.usersService.getByEmail(email);
 
-    if (!user) throw new HttpException('Usuário não encontrado', 404);
+    if (!user) throw new HttpException(STRINGS.user_not_found, 404);
 
     if (!(await this.authService.comparePasswords(password, user.password))) {
-      throw new UnauthorizedException('Senha incorreta');
+      throw new UnauthorizedException(STRINGS.incorrect_password);
     }
 
     const token = await this.authService.generateJwt(user);

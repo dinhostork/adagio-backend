@@ -8,23 +8,26 @@ import {
   Post,
   Request,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Response } from 'express';
 import STRINGS from '../constants/strings';
+import { CreateUserDto } from './createUser.dto';
+
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
   async create(
-    @Body('name') name: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
+    @Body() userDto: CreateUserDto,
     @Request() req,
     @Res() res: Response,
   ) {
-    const userExists = await this.usersService.getByEmail(email);
+    const userExists = await this.usersService.getByEmail(userDto.email);
 
     if (userExists) {
       return res
@@ -33,9 +36,9 @@ export class UsersController {
     }
 
     return this.usersService.create({
-      name,
-      email,
-      password,
+      name: userDto.name,
+      email: userDto.email,
+      password: userDto.password,
       register_ip: req.ip,
       active: true,
       verified: false,

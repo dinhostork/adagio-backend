@@ -1,3 +1,4 @@
+import { Role } from 'src/security/roles/role.enum';
 import {
   Column,
   Entity,
@@ -31,6 +32,13 @@ export class Users {
 
   @Column()
   register_ip: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User,
+  })
+  roles: Role;
 
   @CreateDateColumn()
   createdAt: Date;

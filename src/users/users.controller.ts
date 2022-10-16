@@ -15,7 +15,8 @@ import { UsersService } from './users.service';
 import { Response } from 'express';
 import STRINGS from '../constants/strings';
 import { CreateUserDto } from './createUser.dto';
-
+import * as bcrypt from 'bcrypt';
+import { saltOrRounds } from 'src/security/encript.config';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -35,10 +36,12 @@ export class UsersController {
         .json({ error: STRINGS.existing_user_email });
     }
 
+    const password_hash = await bcrypt.hash(userDto.password, saltOrRounds);
+
     return this.usersService.create({
       name: userDto.name,
       email: userDto.email,
-      password: userDto.password,
+      password: password_hash,
       register_ip: req.ip,
       active: true,
       verified: false,

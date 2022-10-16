@@ -48,6 +48,8 @@ export class UsersController {
       admin: false,
     });
 
+    user.password = undefined;
+
     return res.status(HttpStatus.OK).json(user);
   }
 

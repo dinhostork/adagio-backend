@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -10,7 +9,6 @@ import {
   Request,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Response } from 'express';
@@ -22,7 +20,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Role } from 'src/security/roles/role.enum';
 import RolesGuard from 'src/security/roles/guards/roles.guard';
 @Controller('users')
-@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 

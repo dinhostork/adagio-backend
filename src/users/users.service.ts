@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IUsers } from './IUsers';
 import { Users } from './users.entity';
-
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 @Injectable()
 export class UsersService {
   constructor(
@@ -29,5 +33,12 @@ export class UsersService {
 
   async deleteById(id: number): Promise<any> {
     return this.usersRepository.delete({ id });
+  }
+
+  paginate(options: IPaginationOptions): Promise<Pagination<Users>> {
+    const queryBuilder = this.usersRepository.createQueryBuilder('c');
+    queryBuilder.orderBy('c.id', 'DESC');
+
+    return paginate<Users>(queryBuilder, options);
   }
 }

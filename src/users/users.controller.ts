@@ -1,11 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
+  Query,
   Request,
   Res,
   UseGuards,
@@ -19,6 +22,7 @@ import { saltOrRounds } from 'src/security/encript.config';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Role } from 'src/security/roles/role.enum';
 import RolesGuard from 'src/security/roles/guards/roles.guard';
+
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -57,8 +61,15 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard(Role.Admin))
   @Get()
-  async getALL() {
-    return this.usersService.getAll();
+  async getALL(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    return this.usersService.paginate({
+      page,
+      limit,
+    });
   }
 
   @Get(':id')

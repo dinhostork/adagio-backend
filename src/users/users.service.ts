@@ -8,7 +8,6 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
-import { Abilities } from 'src/abilities/models/abilities.entitiy';
 @Injectable()
 export class UsersService {
   constructor(

@@ -8,6 +8,7 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { Abilities } from 'src/abilities/models/abilities.entitiy';
 @Injectable()
 export class UsersService {
   constructor(
@@ -24,7 +25,17 @@ export class UsersService {
   }
 
   async getById(id: number): Promise<Users | null> {
-    return this.usersRepository.findOneBy({ id });
+    const queryBuilder = await this.usersRepository.createQueryBuilder('users');
+    const data = queryBuilder
+      .leftJoinAndSelect(
+        'users.abilities',
+        'abilities',
+        'users.id = abilities.userId',
+      )
+      .where(`users.id=${id}`)
+      .getOne();
+
+    return data;
   }
 
   async getByEmail(email: string): Promise<Users | null> {

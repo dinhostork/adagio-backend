@@ -13,7 +13,7 @@ export class Abilities {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column([{ nullable: false }])
+  @Column()
   title: string;
 
   @Column([{ nullable: true }])

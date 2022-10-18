@@ -35,9 +35,15 @@ export class UsersService {
     return this.usersRepository.delete({ id });
   }
 
-  paginate(options: IPaginationOptions): Promise<Pagination<Users>> {
-    const queryBuilder = this.usersRepository.createQueryBuilder('c');
-    queryBuilder.orderBy('c.id', 'DESC');
+  paginate(
+    options: IPaginationOptions,
+    name?: string,
+  ): Promise<Pagination<Users>> {
+    const queryBuilder = this.usersRepository.createQueryBuilder('users');
+    if (name) {
+      queryBuilder.where('users.name LIKE :s', { s: `%${name}%` });
+    }
+    queryBuilder.orderBy('users.name', 'DESC');
 
     return paginate<Users>(queryBuilder, options);
   }

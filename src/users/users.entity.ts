@@ -1,3 +1,4 @@
+import { Abilities } from 'src/abilities/models/abilities.entitiy';
 import { Role } from 'src/security/roles/role.enum';
 import {
   Column,
@@ -5,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -39,6 +42,10 @@ export class Users {
     default: Role.User,
   })
   roles: Role;
+
+  @OneToMany(() => Abilities, (abilities) => abilities.user)
+  @JoinTable()
+  abilities: [];
 
   @CreateDateColumn()
   createdAt: Date;

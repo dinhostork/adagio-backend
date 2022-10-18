@@ -8,6 +8,8 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { AbilitiesVotes } from 'src/abilities/models/abitlityvotes.entity';
+import { VoteTypes } from 'src/abilities/models/votetypes.enum';
 @Injectable()
 export class UsersService {
   constructor(
@@ -30,6 +32,18 @@ export class UsersService {
         'users.abilities',
         'abilities',
         'users.id = abilities.userId',
+      )
+      .leftJoinAndMapMany(
+        'abilities.positives',
+        'abilities.votes',
+        'votes',
+        `votes.abilityId = abilities.id AND votes.type = '${VoteTypes.POSITIVE}'`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.negatives',
+        'abilities.votes',
+        'negative_votes',
+        `negative_votes.abilityId = abilities.id AND negative_votes.type = '${VoteTypes.NEGATIVE}'`,
       )
       .where(`users.id=${id}`)
       .getOne();

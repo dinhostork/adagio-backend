@@ -1,4 +1,5 @@
 import { Abilities } from 'src/abilities/models/abilities.entitiy';
+import { AbilitiesVotes } from 'src/abilities/models/abitlityvotes.entity';
 import { Role } from 'src/security/roles/role.enum';
 import {
   Column,
@@ -46,6 +47,10 @@ export class Users {
   @OneToMany(() => Abilities, (abilities) => abilities.user)
   @JoinTable()
   abilities: [];
+
+  @OneToMany(() => AbilitiesVotes, (votes) => votes.voter)
+  @JoinTable()
+  votes: [];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -6,7 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
+  JoinTable,
 } from 'typeorm';
+import { AbilitiesVotes } from './abitlityvotes.entity';
 
 @Entity()
 export class Abilities {
@@ -27,6 +30,10 @@ export class Abilities {
     onUpdate: 'CASCADE',
   })
   user: Users;
+
+  @OneToMany(() => AbilitiesVotes, (votes) => votes.ability)
+  @JoinTable()
+  votes: [];
 
   @CreateDateColumn()
   createdAt: Date;

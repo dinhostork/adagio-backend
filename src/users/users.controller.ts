@@ -81,6 +81,10 @@ export class UsersController {
     return this.usersService.getById(id);
   }
 
+  @Get('profile/:id')
+  async getProfileById(@Param('id') id: number) {
+    return this.usersService.getProfileById(id);
+  }
   @Delete(':id')
   async delete(@Param('id') id: number) {
     return this.usersService.deleteById(id);

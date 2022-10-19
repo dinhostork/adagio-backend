@@ -8,7 +8,6 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
-import { AbilitiesVotes } from 'src/abilities/models/abitlityvotes.entity';
 import { VoteTypes } from 'src/abilities/models/votetypes.enum';
 @Injectable()
 export class UsersService {
@@ -26,7 +25,11 @@ export class UsersService {
   }
 
   async getById(id: number): Promise<Users | null> {
-    const queryBuilder = await this.usersRepository.createQueryBuilder('users');
+    return this.usersRepository.findOneBy({ id });
+  }
+
+  async getProfileById(id: number): Promise<Users | null> {
+    const queryBuilder = this.usersRepository.createQueryBuilder('users');
     const data = queryBuilder
       .leftJoinAndSelect(
         'users.abilities',
@@ -36,8 +39,8 @@ export class UsersService {
       .leftJoinAndMapMany(
         'abilities.positives',
         'abilities.votes',
-        'votes',
-        `votes.abilityId = abilities.id AND votes.type = '${VoteTypes.POSITIVE}'`,
+        'positive_votes',
+        `positive_votes.abilityId = abilities.id AND positive_votes.type = '${VoteTypes.POSITIVE}'`,
       )
       .leftJoinAndMapMany(
         'abilities.negatives',
@@ -45,6 +48,43 @@ export class UsersService {
         'negative_votes',
         `negative_votes.abilityId = abilities.id AND negative_votes.type = '${VoteTypes.NEGATIVE}'`,
       )
+      .leftJoinAndMapMany(
+        'negative_votes.voter',
+        'negative_votes.voter',
+        'negative_voter',
+        `negative_votes.voter = negative_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'positive_votes.voter',
+        'positive_votes.voter',
+        'positive_voter',
+        `positive_votes.voter = positive_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.comments',
+        'abilities.comments',
+        'comments',
+        'abilities.id = comments.abilityId',
+      )
+      .leftJoinAndMapMany(
+        'comments.author',
+        'comments.author',
+        'author',
+        'comments.authorId = author.id',
+      )
+      .select([
+        'users',
+        'abilities',
+        'positive_votes',
+        'negative_votes',
+        'negative_voter.id',
+        'negative_voter.name',
+        'positive_voter.id',
+        'positive_voter.name',
+        'comments',
+        'author.id',
+        'author.name',
+      ])
       .where(`users.id=${id}`)
       .getOne();
 

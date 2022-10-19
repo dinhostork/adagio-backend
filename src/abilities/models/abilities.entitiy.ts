@@ -9,6 +9,7 @@ import {
   OneToMany,
   JoinTable,
 } from 'typeorm';
+import { AbilitiesComments } from './abilitycomments.entity';
 import { AbilitiesVotes } from './abitlityvotes.entity';
 
 @Entity()
@@ -34,6 +35,10 @@ export class Abilities {
   @OneToMany(() => AbilitiesVotes, (votes) => votes.ability)
   @JoinTable()
   votes: [];
+
+  @OneToMany(() => AbilitiesComments, (commets) => commets.ability)
+  @JoinTable()
+  comments: [];
 
   @CreateDateColumn()
   createdAt: Date;

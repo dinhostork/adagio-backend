@@ -20,7 +20,7 @@ export class Abilities {
   @Column()
   title: string;
 
-  @Column([{ nullable: true }])
+  @Column('text')
   video_url: string;
 
   @Column('boolean')

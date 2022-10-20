@@ -40,6 +40,7 @@ export class AbilitiesService {
   getOwnAbilities(
     user: Users,
     options: IPaginationOptions,
+    title: string,
   ): Promise<Pagination<Abilities>> {
     const queryBuilder = this.abilityRepository.createQueryBuilder('abilities');
     const data = queryBuilder
@@ -80,6 +81,10 @@ export class AbilitiesService {
         'comments.authorId = author.id',
       )
       .where(`userId=${user.id}`);
+
+    if (title) {
+      data.where('abilities.title LIKE :s', { s: `%${title}%` });
+    }
 
     return paginate<Abilities>(data, options);
   }

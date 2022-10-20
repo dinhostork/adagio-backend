@@ -52,11 +52,16 @@ export class AbilitiesController {
     @Request() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('title', new DefaultValuePipe(null)) title = null,
   ) {
-    return this.abilityService.getOwnAbilities(req.user, {
-      page,
-      limit,
-    });
+    return this.abilityService.getOwnAbilities(
+      req.user,
+      {
+        page,
+        limit,
+      },
+      title,
+    );
   }
 
   captalize(word: string) {

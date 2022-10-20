@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -78,6 +79,12 @@ export class AbilitiesController {
       { page, limit },
       title,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteAbilityById(@Param('id') id: number, @Request() req) {
+    return this.abilityService.deleteById(id, req.user);
   }
 
   captalize(word: string) {

@@ -143,4 +143,13 @@ export class AbilitiesService {
 
     return paginate<Abilities>(data, options);
   }
+
+  async deleteById(id: number, user: Users) {
+    await this.abilityRepository
+      .createQueryBuilder('ab')
+      .delete()
+      .from('abilities')
+      .where(`id = ${id} AND userId = ${user.id}`)
+      .execute();
+  }
 }

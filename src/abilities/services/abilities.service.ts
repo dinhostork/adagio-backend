@@ -4,7 +4,12 @@ import { Users } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
 import { AddAbilityDto } from '../dtos/add-ability.dto';
 import { Abilities } from '../models/abilities.entitiy';
-
+import { VoteTypes } from '../models/votetypes.enum';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 @Injectable()
 export class AbilitiesService {
   constructor(
@@ -30,5 +35,52 @@ export class AbilitiesService {
       .getOne();
 
     return data;
+  }
+
+  getOwnAbilities(
+    user: Users,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Abilities>> {
+    const queryBuilder = this.abilityRepository.createQueryBuilder('abilities');
+    const data = queryBuilder
+      .leftJoinAndMapMany(
+        'abilities.positives',
+        'abilities.votes',
+        'positive_votes',
+        `positive_votes.abilityId = abilities.id AND positive_votes.type = '${VoteTypes.POSITIVE}'`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.negatives',
+        'abilities.votes',
+        'negative_votes',
+        `negative_votes.abilityId = abilities.id AND negative_votes.type = '${VoteTypes.NEGATIVE}'`,
+      )
+      .leftJoinAndMapMany(
+        'negative_votes.voter',
+        'negative_votes.voter',
+        'negative_voter',
+        `negative_votes.voter = negative_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'positive_votes.voter',
+        'positive_votes.voter',
+        'positive_voter',
+        `positive_votes.voter = positive_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.comments',
+        'abilities.comments',
+        'comments',
+        'abilities.id = comments.abilityId',
+      )
+      .leftJoinAndMapMany(
+        'comments.author',
+        'comments.author',
+        'author',
+        'comments.authorId = author.id',
+      )
+      .where(`userId=${user.id}`);
+
+    return paginate<Abilities>(data, options);
   }
 }

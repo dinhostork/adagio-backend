@@ -1,8 +1,12 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
+  Get,
   HttpStatus,
+  ParseIntPipe,
   Post,
+  Query,
   Request,
   Res,
   UseGuards,
@@ -40,6 +44,19 @@ export class AbilitiesController {
     const ability = await this.abilityService.add(data, req.user);
     ability.user = undefined;
     return res.status(HttpStatus.OK).json(ability);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getownAbilities(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ) {
+    return this.abilityService.getOwnAbilities(req.user, {
+      page,
+      limit,
+    });
   }
 
   captalize(word: string) {

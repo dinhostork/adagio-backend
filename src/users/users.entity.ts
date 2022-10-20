@@ -20,22 +20,22 @@ export class Users {
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, select: false })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
-  @Column({ default: false })
+  @Column({ default: false, select: false })
   verified: boolean;
 
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   active: boolean;
 
-  @Column({ default: true })
+  @Column({ default: true, select: false })
   admin: boolean;
 
-  @Column()
+  @Column({ select: false })
   register_ip: string;
 
   @Column({

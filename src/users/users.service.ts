@@ -92,7 +92,14 @@ export class UsersService {
   }
 
   async getByEmail(email: string): Promise<Users | null> {
-    return this.usersRepository.findOneBy({ email });
+    const qb = await this.usersRepository
+      .createQueryBuilder('u')
+      .addSelect('u.password')
+      .addSelect('u.email')
+      .where({ email })
+      .getOne();
+
+    return qb;
   }
 
   async deleteById(id: number): Promise<any> {

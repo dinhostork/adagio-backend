@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Get,
   HttpStatus,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -60,6 +61,21 @@ export class AbilitiesController {
         page,
         limit,
       },
+      title,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/user/:userId')
+  async getUserAbilities(
+    @Param('userId') Userid: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('title', new DefaultValuePipe(null)) title = null,
+  ) {
+    return this.abilityService.getUsersAbilities(
+      Userid,
+      { page, limit },
       title,
     );
   }

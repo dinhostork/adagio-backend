@@ -83,7 +83,62 @@ export class AbilitiesService {
       .where(`userId=${user.id}`);
 
     if (title) {
-      data.where('abilities.title LIKE :s', { s: `%${title}%` });
+      data.where(`userId=${user.id} AND abilities.title LIKE :s`, {
+        s: `%${title}%`,
+      });
+    }
+
+    return paginate<Abilities>(data, options);
+  }
+
+  getUsersAbilities(
+    userId: number,
+    options: IPaginationOptions,
+    title: string,
+  ): Promise<Pagination<Abilities>> {
+    const data = this.abilityRepository
+      .createQueryBuilder('abilities')
+      .where({ user: userId })
+      .leftJoinAndMapMany(
+        'abilities.positives',
+        'abilities.votes',
+        'positive_votes',
+        `positive_votes.abilityId = abilities.id AND positive_votes.type = '${VoteTypes.POSITIVE}'`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.negatives',
+        'abilities.votes',
+        'negative_votes',
+        `negative_votes.abilityId = abilities.id AND negative_votes.type = '${VoteTypes.NEGATIVE}'`,
+      )
+      .leftJoinAndMapMany(
+        'negative_votes.voter',
+        'negative_votes.voter',
+        'negative_voter',
+        `negative_votes.voter = negative_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'positive_votes.voter',
+        'positive_votes.voter',
+        'positive_voter',
+        `positive_votes.voter = positive_voter.id`,
+      )
+      .leftJoinAndMapMany(
+        'abilities.comments',
+        'abilities.comments',
+        'comments',
+        '(abilities.id = comments.abilityId) AND abilities.can_comment = 1 OR (abilities.id is NULL) AND abilities.can_comment = 0',
+      )
+      .leftJoinAndMapMany(
+        'comments.author',
+        'comments.author',
+        'author',
+        'comments.authorId = author.id',
+      );
+    if (title) {
+      data.where(`userId = ${userId} AND abilities.title LIKE :s`, {
+        s: `%${title}%`,
+      });
     }
 
     return paginate<Abilities>(data, options);

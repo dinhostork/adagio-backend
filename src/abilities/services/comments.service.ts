@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
@@ -60,5 +60,29 @@ export class AbilitiesCommentsService {
       return paginate<AbilitiesComments>(data, options);
     }
     throw new BadRequestException(STRINGS.comments_abiitities_not_seen);
+  }
+
+  async deleteById(id: number, user: Users) {
+    const commentBelongsToUserOrisAuthor = await this.commentsRespository
+      .createQueryBuilder('comments')
+      .leftJoin('abilities', 'abilities', 'comments.abilityId = abilities.id')
+      .where(
+        `comments.id = ${id} AND (comments.author = ${user.id} OR abilities.userId = ${user.id})`,
+      )
+      .select()
+      .getOne();
+
+    if (!commentBelongsToUserOrisAuthor) {
+      throw new BadRequestException(STRINGS.action_not_permitted);
+    }
+
+    this.commentsRespository
+      .createQueryBuilder('comments')
+      .delete()
+      .from(AbilitiesComments)
+      .where(`id = ${id}`)
+      .execute();
+
+    throw new HttpException('', 204);
   }
 }

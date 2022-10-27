@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
   HttpStatus,
   NotFoundException,
@@ -73,5 +74,12 @@ export class AbilitiesCommentsController {
       { page, limit },
       user,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/comments/:commentId')
+  deleteById(@Param('commentId') commentId: number, @Request() req) {
+    const user = req.user as unknown as Users;
+    return this.commentsService.deleteById(commentId, user);
   }
 }

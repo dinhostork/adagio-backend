@@ -11,6 +11,7 @@ const STRINGS = {
   user_can_not_comment: 'Não é possível fazer comentários',
   user_not_verified: 'Endereço de e-mail não verificado',
   user_banned: 'Usuário bloqueado',
+  action_not_permitted: 'Ação não permitida',
 };
 
 export default STRINGS;

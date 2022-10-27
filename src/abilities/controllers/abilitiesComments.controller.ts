@@ -10,6 +10,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Request,
   Res,
@@ -81,5 +82,16 @@ export class AbilitiesCommentsController {
   deleteById(@Param('commentId') commentId: number, @Request() req) {
     const user = req.user as unknown as Users;
     return this.commentsService.deleteById(commentId, user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/comments/:commentId')
+  updateById(
+    @Param('commentId') commentId: number,
+    @Request() req,
+    @Body() comment: AddCommentDto,
+  ) {
+    const user = req.user as unknown as Users;
+    return this.commentsService.updateById(commentId, user, comment.comment);
   }
 }

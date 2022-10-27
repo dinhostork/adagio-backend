@@ -85,4 +85,28 @@ export class AbilitiesCommentsService {
 
     throw new HttpException('', 204);
   }
+
+  async updateById(id: number, author: Users, comment: string) {
+    const qb = await this.commentsRespository
+      .createQueryBuilder('comments')
+      .update({
+        comment,
+      })
+
+      .where({
+        id,
+        author: {
+          id: author.id,
+        },
+      })
+      .execute();
+
+    if (qb.affected < 1) {
+      throw new BadRequestException(STRINGS.action_not_permitted);
+    }
+
+    const commentToReturn = await this.commentsRespository.findBy({ id });
+
+    return commentToReturn;
+  }
 }

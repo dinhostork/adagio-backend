@@ -27,6 +27,10 @@ export class AbilitiesService {
     });
   }
 
+  async getById(id: number) {
+    return this.abilityRepository.findOneBy({ id });
+  }
+
   async getByLoggedUserAndAbilityName(title: string, user: Users) {
     const data = this.abilityRepository
       .createQueryBuilder('a')
@@ -67,18 +71,6 @@ export class AbilitiesService {
         'positive_votes.voter',
         'positive_voter',
         `positive_votes.voter = positive_voter.id`,
-      )
-      .leftJoinAndMapMany(
-        'abilities.comments',
-        'abilities.comments',
-        'comments',
-        'abilities.id = comments.abilityId',
-      )
-      .leftJoinAndMapMany(
-        'comments.author',
-        'comments.author',
-        'author',
-        'comments.authorId = author.id',
       )
       .where(`userId=${user.id}`);
 
@@ -122,19 +114,8 @@ export class AbilitiesService {
         'positive_votes.voter',
         'positive_voter',
         `positive_votes.voter = positive_voter.id`,
-      )
-      .leftJoinAndMapMany(
-        'abilities.comments',
-        'abilities.comments',
-        'comments',
-        '(abilities.id = comments.abilityId) AND abilities.can_comment = 1 OR (abilities.id is NULL) AND abilities.can_comment = 0',
-      )
-      .leftJoinAndMapMany(
-        'comments.author',
-        'comments.author',
-        'author',
-        'comments.authorId = author.id',
       );
+
     if (title) {
       data.where(`userId = ${userId} AND abilities.title LIKE :s`, {
         s: `%${title}%`,

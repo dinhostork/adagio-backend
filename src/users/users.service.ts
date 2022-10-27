@@ -24,6 +24,19 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  async getForLogin(id: number): Promise<Users | null> {
+    const qb = await this.usersRepository
+      .createQueryBuilder('u')
+      .addSelect('u.password')
+      .addSelect('u.verified')
+      .addSelect('u.active')
+      .addSelect('u.register_ip')
+      .addSelect('u.email')
+      .where({ id })
+      .getOne();
+
+    return qb;
+  }
   async getById(id: number): Promise<Users | null> {
     return this.usersRepository.findOneBy({ id });
   }

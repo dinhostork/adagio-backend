@@ -5,9 +5,13 @@ import { Repository } from 'typeorm';
 import { Abilities } from '../models/abilities.entitiy';
 import { AddCommentDto } from '../dtos/add-comment.dto';
 import { AbilitiesComments } from '../models/abilitycomments.entity';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { AbilitiesService } from './abilities.service';
 import STRINGS from 'src/constants/strings';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 @Injectable()
 export class AbilitiesCommentsService {
   constructor(
@@ -19,7 +23,11 @@ export class AbilitiesCommentsService {
     private readonly ablityRepository: Repository<Abilities>,
   ) {}
 
-  async add(data: AddCommentDto, user: Users, ability: Abilities) {
+  async add(
+    data: AddCommentDto,
+    user: Users,
+    ability: Abilities,
+  ): Promise<AbilitiesComments> {
     return this.commentsRespository.save({
       ...data,
       author: user,
@@ -31,7 +39,7 @@ export class AbilitiesCommentsService {
     abilityid: number,
     options: IPaginationOptions,
     user: Users,
-  ) {
+  ): Promise<Pagination<AbilitiesComments>> {
     const qb = this.commentsRespository.createQueryBuilder('comments');
     const ability = await this.abilityService.getById(abilityid);
 
@@ -62,7 +70,7 @@ export class AbilitiesCommentsService {
     throw new BadRequestException(STRINGS.comments_abiitities_not_seen);
   }
 
-  async deleteById(id: number, user: Users) {
+  async deleteById(id: number, user: Users): Promise<void> {
     const commentBelongsToUserOrisAuthor = await this.commentsRespository
       .createQueryBuilder('comments')
       .leftJoin('abilities', 'abilities', 'comments.abilityId = abilities.id')
@@ -86,7 +94,11 @@ export class AbilitiesCommentsService {
     throw new HttpException('', 204);
   }
 
-  async updateById(id: number, author: Users, comment: string) {
+  async updateById(
+    id: number,
+    author: Users,
+    comment: string,
+  ): Promise<AbilitiesComments> {
     const qb = await this.commentsRespository
       .createQueryBuilder('comments')
       .update({
@@ -105,7 +117,7 @@ export class AbilitiesCommentsService {
       throw new BadRequestException(STRINGS.action_not_permitted);
     }
 
-    const commentToReturn = await this.commentsRespository.findBy({ id });
+    const commentToReturn = await this.commentsRespository.findOneBy({ id });
 
     return commentToReturn;
   }

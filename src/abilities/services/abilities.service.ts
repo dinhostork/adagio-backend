@@ -17,7 +17,7 @@ export class AbilitiesService {
     private readonly abilityRepository: Repository<Abilities>,
   ) {}
 
-  async add(data: AddAbilityDto, user: Users) {
+  async add(data: AddAbilityDto, user: Users): Promise<Abilities> {
     return this.abilityRepository.save({
       ...data,
       title:
@@ -27,11 +27,14 @@ export class AbilitiesService {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number): Promise<Abilities> {
     return this.abilityRepository.findOneBy({ id });
   }
 
-  async getByLoggedUserAndAbilityName(title: string, user: Users) {
+  async getByLoggedUserAndAbilityName(
+    title: string,
+    user: Users,
+  ): Promise<Abilities> {
     const data = this.abilityRepository
       .createQueryBuilder('a')
       .where(`title = '${title}' AND userId = ${user.id}`)
@@ -125,7 +128,7 @@ export class AbilitiesService {
     return paginate<Abilities>(data, options);
   }
 
-  async deleteById(id: number, user: Users) {
+  async deleteById(id: number, user: Users): Promise<void> {
     await this.abilityRepository
       .createQueryBuilder('ab')
       .delete()
